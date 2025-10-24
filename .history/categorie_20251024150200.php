@@ -1,13 +1,4 @@
 <?php
-
-    session_start();
-    include_once("connexion/connexion.php");
-
-    // Vérifie si l'utilisateur est connecté
-    if (!isset($_SESSION['id'])) {
-        header("Location: login.php");
-        exit;
-    }
     // Connexion à la base de données  
     include_once('connexion/connexion.php');
    
@@ -123,7 +114,7 @@
                                     <tbody>
                                      <tr>
                                         <?php
-                                        
+                                        session_start();
                                         include_once("connexion/connexion.php");
 
                                         // Vérifie que l'utilisateur est connecté et que son id_entreprise est en session

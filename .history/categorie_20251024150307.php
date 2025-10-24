@@ -1,5 +1,5 @@
 <?php
-
+<?php
     session_start();
     include_once("connexion/connexion.php");
 
@@ -8,6 +8,8 @@
         header("Location: login.php");
         exit;
     }
+
+?>
     // Connexion à la base de données  
     include_once('connexion/connexion.php');
    

@@ -183,7 +183,7 @@
                                     </thead>
                                     <tbody>
                                     <?php
-                                   
+                                    session_start();
                                     include_once("connexion/connexion.php");
 
                                     // Vérifie que l'utilisateur est connecté et que son id_entreprise est en session
