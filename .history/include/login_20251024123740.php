@@ -1,0 +1,7 @@
+<?php_
+session_start();
+// appele de la methode de connexion
+inclode
+
+
+?>

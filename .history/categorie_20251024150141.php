@@ -1,13 +1,4 @@
 <?php
-
-    session_start();
-    include_once("connexion/connexion.php");
-
-    // Vérifie si l'utilisateur est connecté
-    if (!isset($_SESSION['id'])) {
-        header("Location: login.php");
-        exit;
-    }
     // Connexion à la base de données  
     include_once('connexion/connexion.php');
    
@@ -122,49 +113,49 @@
                                                                        
                                     <tbody>
                                      <tr>
-                                        <?php
-                                        
-                                        include_once("connexion/connexion.php");
+<?php
+session_start();
+include_once("connexion/connexion.php");
 
-                                        // Vérifie que l'utilisateur est connecté et que son id_entreprise est en session
-                                        if (!isset($_SESSION['id']) || !isset($_SESSION['id_entreprise'])) {
-                                            echo '<tr><td colspan="4">Veuillez vous connecter.</td></tr>';
-                                            exit;
-                                        }
+// Vérifie que l'utilisateur est connecté et que son id_entreprise est en session
+if (!isset($_SESSION['id']) || !isset($_SESSION['id_entreprise'])) {
+    echo '<tr><td colspan="4">Veuillez vous connecter.</td></tr>';
+    exit;
+}
 
-                                        $id_entreprise = $_SESSION['id_entreprise'];
+$id_entreprise = $_SESSION['id_entreprise'];
 
-                                        $sql = "
-                                            SELECT c.id, c.designation, c.autreinfo
-                                            FROM categorie c
-                                            INNER JOIN utilisateur u ON c.id_utilisateur = u.id
-                                            WHERE u.id_entreprise = ?
-                                            ORDER BY c.designation ASC
-                                        ";
-                                        $stmt = $pdo->prepare($sql);
-                                        $stmt->execute([$id_entreprise]);
+$sql = "
+    SELECT c.id, c.designation, c.autreinfo
+    FROM categorie c
+    INNER JOIN utilisateur u ON c.id_utilisateur = u.id
+    WHERE u.id_entreprise = ?
+    ORDER BY c.designation ASC
+";
+$stmt = $pdo->prepare($sql);
+$stmt->execute([$id_entreprise]);
 
-                                        $has = false;
-                                        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                                            $has = true;
-                                            ?>
-                                            <tr>
-                                                <td><?= htmlspecialchars($row['id']) ?></td>
-                                                <td><?= htmlspecialchars($row['designation']) ?></td>
-                                                <td><?= htmlspecialchars($row['autreinfo']) ?></td>
-                                                <td>
-                                                    <a href="categorie.php?modifier=<?= urlencode($row['id']) ?>" class="btn btn-primary">Modifier</a>
-                                                    <a href="include/categorie.php?sup=<?= urlencode($row['id']) ?>" class="btn btn-danger" onclick="return confirm('Supprimer cette catégorie ?')">Supprimer</a>
-                                                </td>
-                                            </tr>
-                                            <?php
-                                        }
+$has = false;
+while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+    $has = true;
+    ?>
+    <tr>
+        <td><?= htmlspecialchars($row['id']) ?></td>
+        <td><?= htmlspecialchars($row['designation']) ?></td>
+        <td><?= htmlspecialchars($row['autreinfo']) ?></td>
+        <td>
+            <a href="categorie.php?modifier=<?= urlencode($row['id']) ?>" class="btn btn-primary">Modifier</a>
+            <a href="include/categorie.php?sup=<?= urlencode($row['id']) ?>" class="btn btn-danger" onclick="return confirm('Supprimer cette catégorie ?')">Supprimer</a>
+        </td>
+    </tr>
+    <?php
+}
 
-                                        if (!$has) {
-                                            echo '<tr><td colspan="4">Aucune catégorie pour votre entreprise.</td></tr>';
-                                        }
-                                        ?>
-                                        </tr>
+if (!$has) {
+    echo '<tr><td colspan="4">Aucune catégorie pour votre entreprise.</td></tr>';
+}
+?>
+</tr>
 
                                        
                                     </tbody>

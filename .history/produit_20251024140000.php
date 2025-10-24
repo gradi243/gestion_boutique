@@ -181,62 +181,44 @@
                                             <th colspan="2">Action</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                    <?php
-                                   
-                                    include_once("connexion/connexion.php");
-
-                                    // Vérifie que l'utilisateur est connecté et que son id_entreprise est en session
-                                    if (!isset($_SESSION['id']) || !isset($_SESSION['id_entreprise'])) {
-                                        echo '<tr><td colspan="6">Veuillez vous connecter.</td></tr>';
-                                        exit;
-                                    }
-
-                                    $id_entreprise = $_SESSION['id_entreprise'];
-
-                                    $sql = "
-                                        SELECT 
-                                            p.id,
-                                            p.designation,
-                                            p.prix_unitaire AS prix_vente,
-                                            p.stock,
-                                            p.stock_alerte,
-                                            p.prix_unitaire_achat,
-                                            c.id AS id_categorie,
-                                            c.designation AS categorie,
-                                            CONCAT(u.nom, ' ', COALESCE(u.prenom, '')) AS utilisateur
-                                        FROM produit p
-                                        INNER JOIN utilisateur u ON p.id_utilisateur = u.id
-                                        INNER JOIN categorie c ON p.id_categorie = c.id
-                                        WHERE u.id_entreprise = ?
-                                        ORDER BY p.designation ASC
-                                    ";
-                                    $stmt = $pdo->prepare($sql);
-                                    $stmt->execute([$id_entreprise]);
-
-                                    $has = false;
-                                    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                                        $has = true;
-                                        ?>
+                                    <tbody>                                        
                                         <tr>
-                                            <td><?= htmlspecialchars($row['id']) ?></td>
-                                            <td><?= htmlspecialchars($row['designation']) ?></td>
-                                            <td><?= htmlspecialchars($row['categorie']) ?></td>
-                                            <td><?= htmlspecialchars($row['prix_vente']) ?></td>
-                                            <td><?= htmlspecialchars($row['utilisateur']) ?></td>
-                                            <td>
-                                                <a href="produit.php?modifier=<?= urlencode($row['id']) ?>" class="btn btn-primary">Modifier</a>
-                                                <a href="include/produit.php?sup=<?= urlencode($row['id']) ?>" class="btn btn-danger" onclick="return confirm('Supprimer ce produit ?')">Supprimer</a>
-                                            </td>
-                                        </tr>
-                                        <?php
-                                    }
-                                    if (!$has) {
-                                        echo '<tr><td colspan="6">Aucun produit pour votre entreprise.</td></tr>';
-                                    }
-                                    ?>
-                                    </tbody>
+                                            <?php
+                                             include_once("connexion/connexion.php");
 
+                                             $sql = "SELECT 
+                                                        produit.id,
+                                                        produit.designation,
+                                                        produit.prix_unitaire AS prix_vente,
+                                                        produit.stock,
+                                                        produit.stock_alerte,
+                                                        produit.prix_unitaire_achat,
+                                                        categorie.id AS id_categorie,
+                                                        categorie.designation AS categorie
+                                                    FROM produit
+                                                    INNER JOIN categorie ON produit.id_categorie = categorie.id WH
+                                                    ";
+                                              
+                                                $stmt = $pdo->prepare($sql);
+                                                $stmt->execute();
+                                                while ($row = $stmt->fetch()) 
+                                                {
+                                            ?>
+                                                    <td><?=  htmlspecialchars($row['id']) ?> </td>
+                                                    <td><?=  htmlspecialchars($row['designation']) ?> </td>
+                                                    <td><?=  htmlspecialchars($row['categorie'])  ?> </td>                                  
+                                                    <td><?=  htmlspecialchars($row['prix_vente'])  ?> </td> 
+                                                    <td><?=  htmlspecialchars($row['stock_alerte'])  ?> </td>
+                                                    <td>
+                                                        <a href="produit.php?modifier=<?= htmlspecialchars($row['id']) ?>" class="btn btn-primary">Modifier</a>
+                                                        <a href="include/produit.php?sup=<?=  htmlspecialchars($row['id']) ?>" class="btn btn-danger">Supprimer</a>
+                                                    </td> 
+
+                                        </tr>
+                                        <?php 
+                                             }                                             
+                                            ?>
+                                    </tbody>
                                 </table>
                             </div>
                         </div>
