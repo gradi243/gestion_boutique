@@ -59,19 +59,36 @@
                             <tr>
                                 <td>Categorie</td>                                
                                 <td>
-                                    <select name="categorie" class="form-control">
-                                        <?php                                
-                                            include_once('connexion/connexion.php');
-                                            $requette="SELECT * FROM categorie";
-                                            $execute=$pdo->prepare($requette);
-                                            $execute->execute();
+                              <select name="categorie" class="form-control">
+                                        <?php
+                                        session_start(); // assure-toi que la session est démarrée
+                                        include_once('connexion/connexion.php');
 
-                                            while($lire=$execute->fetch()){
-                                        ?>
-                                        <option value="<?= htmlspecialchars($lire["id"])?>"><?= htmlspecialchars($lire["designation"])?></option>
+                                        if (!isset($_SESSION['id_entreprise'])) {
+                                            echo '<option value="">Veuillez vous connecter</option>';
+                                            exit;
+                                        }
+
+                                        $id_entreprise = $_SESSION['id_entreprise'];
+
+                                        // Récupère seulement les catégories liées aux utilisateurs de la même entreprise
+                                        $requete = "
+                                            SELECT DISTINCT c.id, c.designation
+                                            FROM categorie c
+                                            INNER JOIN utilisateur u ON c.id_utilisateur = u.id
+                                            WHERE u.id_entreprise = ?
+                                            ORDER BY c.designation ASC
+                                        ";
+                                        $stmt = $pdo->prepare($requete);
+                                        $stmt->execute([$id_entreprise]);
+
+                                        while ($lire = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                                            ?>
+                                            <option value="<?= htmlspecialchars($lire['id']) ?>">
+                                                <?= htmlspecialchars($lire['designation']) ?>
+                                            </option>
                                         <?php } ?>
-                                    </select>
-                                   
+                                    </select>                                   
                                 </td>
 
                                 <td></td>

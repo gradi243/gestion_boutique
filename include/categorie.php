@@ -1,4 +1,6 @@
 <?php
+//demarage de la session pour affiche les information de l'utilisateur a fait de voir l'entrprise
+session_start();
 // Connexion à la base de données
 require_once ("../connexion/connexion.php");
 // Inclusion du fichier de gestion des catégories
@@ -9,15 +11,16 @@ if (isset($_POST['valider'])) {
     $id=htmlspecialchars($_POST["id"]);
     $nom = $_POST['categorie'];
     $autre = $_POST['autreinfo'];
+    $user= $_SESSION['id'];
 
     if(!empty($id)){
         //verifie que tousle champs sont rempli
          if(!empty($id) && !empty($nom) && !empty($autre)){
             try {
                 // Requête de mise à jour
-                $sql = "UPDATE categorie SET designation = ?, autreinfo = ? WHERE id = ?";
+                $sql = "UPDATE categorie SET designation = ?, autreinfo = ?,id_utilisateur=? WHERE id = ?";
                 $traitement_sql = $pdo->prepare($sql);
-                $traitement_sql->execute([$nom, $autre, $id]);
+                $traitement_sql->execute([$nom, $autre,$user, $id]);
 
                 // Vérifie si la mise à jour a bien eu lieu
                 if ($traitement_sql->rowCount() > 0) {
@@ -41,9 +44,9 @@ if (isset($_POST['valider'])) {
          // Vérifie que les champs ne sont pas vides
         if (!empty($nom) && !empty($autre)) {
             try {
-                $sql = "INSERT INTO categorie(designation,autreinfo) VALUES (?,?)";
+                $sql = "INSERT INTO categorie(designation,autreinfo,id_utilisateur) VALUES (?,?,?)";
                 $traitement_sql = $pdo->prepare($sql);
-                $traitement_sql->execute([$nom, $autre]);
+                $traitement_sql->execute([$nom, $autre,$user]);
             if ($traitement_sql->rowCount() > 0) {
                     
                     $msg=" Catégorie ajoutée avec succès !";
