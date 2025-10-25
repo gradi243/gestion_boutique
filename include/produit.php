@@ -1,5 +1,8 @@
 <?php
+//demarage de la session pour affiche les information de l'utilisateur a fait de voir l'entrprise
+session_start();
 // Connexion à la base de données
+
 require_once ("../connexion/connexion.php");
 // Inclusion du fichier de gestion des produits
 require_once ("../include/produit.php");
@@ -11,10 +14,7 @@ if (isset($_POST['valider'])) {
     $categorie = htmlspecialchars($_POST['categorie']);
     $prix_v = htmlspecialchars($_POST["puv"]);
     $alerte = htmlspecialchars($_POST["stockalerte"]);
-   /// $stock = htmlspecialchars($_POST["stock"]);
-   // $prix_achat = htmlspecialchars($_POST["puachat"]);
-    $user = 1; 
-
+    $user = $_SESSION['id'];
     // lamodification
     if (!empty($id)) {
         if (!empty($nom) && !empty($categorie) && !empty($prix_v)) {
@@ -65,7 +65,7 @@ if (isset($_POST['valider'])) {
                 } else {
                     //l'insertion
                     $sql = "INSERT INTO produit(id_categorie, designation, prix_unitaire,stock_alerte, id_utilisateur)
-                            VALUES (?, ?, ?, ?, ?, ?)";
+                            VALUES (?, ?, ?, ?, ?)";
                     $traitement = $pdo->prepare($sql);
                     $traitement->execute([$categorie, $nom, $prix_v,$alerte, $user]);
 
